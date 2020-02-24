@@ -1,21 +1,70 @@
-import React from "react"
-import { Link } from "gatsby"
+import React from 'react'
+import PropTypes from 'prop-types';
+import { graphql } from 'gatsby'
+import { makeStyles } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
 
-import Layout from "../components/layout"
-import Image from "../components/image"
-import SEO from "../components/seo"
+import Layout from '../components/layout'
+import BlogPost from '../components/BlogPost/BlogPost';
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
-    <Link to="/page-2/">Go to page 2</Link>
-  </Layout>
-)
+const useStyles = makeStyles(theme => ({
+  root: {
+    padding: theme.spacing(3, 2),
+  },
+}));
 
-export default IndexPage
+const IndexPage = (props) => {
+  const classes = useStyles();
+
+  return (
+    <Layout>
+      <Box mt={3}>
+        <Grid container spacing={1}>
+        {
+          props.data.allNodeBlogPost.edges.map(({ node: blog}) => (
+            <Grid item key={blog.title} xs={12} >
+              <BlogPost
+                title={blog.title}
+                date={blog.field_date}
+                body={blog.body.value}
+                path={blog.path.alias}
+              />
+            </Grid>
+          ))
+        }
+        </Grid>
+      </Box>
+    </Layout>
+  );
+};
+
+
+export default IndexPage;
+
+// The result of this GraphQL query will be injected as props.data into the
+// IndexPage component.
+export const query = graphql`
+  query {
+    allNodeBlogPost(sort: {fields: [changed], order:DESC}) {
+      edges {
+        node {
+          drupal_id,
+          title,
+          field_date(formatString: "MM.DD.YYYY"),
+          path {
+            alias,
+          }
+          body: body {
+            value,
+          },
+          relationships {
+            tags: field_tags {
+              name,
+            }
+          }
+        }
+      }
+    }
+  }
+`;
