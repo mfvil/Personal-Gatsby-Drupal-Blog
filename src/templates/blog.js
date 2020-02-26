@@ -4,7 +4,7 @@ import Helmet from 'react-helmet';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Layout from '../components/layout';
-import Blog from '../components/Blog/Blog';
+import Blog from '../components/blog/blog';
 import BlogList from '../components/BlogList/BlogList';
 
 const useStyles = makeStyles(theme => ({
